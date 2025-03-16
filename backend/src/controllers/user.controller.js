@@ -23,7 +23,8 @@ export const signup=async (req,res)=>{
             password:hashedPassword,
             email,
             branch,
-            roll
+            roll,
+            role:"user"
         })
 
         if(newUser){
@@ -35,7 +36,8 @@ export const signup=async (req,res)=>{
                 name: newUser.name,
                 email:newUser.email,
                 branch:newUser.branch,
-                roll:newUser.roll
+                roll:newUser.roll,
+                role:newUser.role
             })
         }
         else{
@@ -84,5 +86,30 @@ export const logout=async(req,res)=>{
     } catch (error) {
         console.log("Error in logout controller" , error.message);
         res.status(500).json({message:"Internal server error"})
+    }
+}
+export const promoteToAdmin = async(req,res)=>{
+    try {
+        const userToPromote = await User.findById(req.params.id)
+        if(!userToPromote) return res.status(404).json({message:"User not found"})
+        
+        //Update the users role to admin
+        userToPromote.role = "admin"
+        await userToPromote.save();
+    
+        return res.status(200).json({message:"User is now an admin"})
+    
+    } catch (error) {
+        console.log("Error in promoteUser" , error.message);
+        res.status(500).json({message:"Internal server error"})
+    }
+}
+export const getUsers = async(req,res)=>{
+    try {
+        const users = await User.find().select("-password")
+        res.status(200).json(users);
+    } catch (error) {
+        console.log("Error in getUsers" , error.message);
+        res.status(500).json({message:"Internal server error"})  
     }
 }
