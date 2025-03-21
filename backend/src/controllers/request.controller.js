@@ -36,9 +36,7 @@ export const createRequest=async(req,res)=>{
         console.log("Error in createRequest",error.message);
         res.status(500).json({message:"Internal server error"})
         
-    }
-      
-    
+    }   
 }
 export const getAllRequets = async(req,res)=>{
     try {
@@ -65,7 +63,7 @@ export const acceptRequest=async(req,res)=>{
     
         const request = await Request.findOne({_id:requestId})
 
-        if(!request) return res.status(400).json({message:"Equipment not found!"})
+        if(!request) return res.status(400).json({message:"Request not found!"})
 
         //getting ids of equipment and user that created the request 
         const userId = request.user;
@@ -100,7 +98,7 @@ export const rejectRequest=async(req,res)=>{
     
         const request = await Request.findOne({_id:requestId})
 
-        if(!request) return res.status(400).json({message:"Equipment not found!"})
+        if(!request) return res.status(400).json({message:"Request not found!"})
 
         request.status = "rejected"
         if(reason) request.reason = reason;

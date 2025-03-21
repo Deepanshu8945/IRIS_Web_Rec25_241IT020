@@ -9,18 +9,30 @@ const infrastructureSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    availability: {
+    availablity: {
         type: Boolean,
         required: true,
     },
     capacity: {
-        type: Number,
+        type: Number,//max no of people allowed
         required: true,
     },
-    operatingHours: {
-        type: String,
-        required: true,
-    }
+    operatingHours:{
+        start:{
+            type:String,
+            required:true
+        },
+        end:{
+            type:String,
+            required:true
+        }
+    },
+    bookedTo:[
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"User",
+        }
+    ]
 }, { timestamps: true });
 
 const Infrastructure = mongoose.model("Infrastructure", infrastructureSchema);

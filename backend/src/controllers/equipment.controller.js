@@ -24,6 +24,7 @@ export const addEquipment = async(req,res)=>{
             return res.status(200).json({
                 name:newEquipment.name,
                 quantity : newEquipment.quantity,
+                availableQuantity: newEquipment.quantity,
                 condition:newEquipment.condition,
                 availablity:newEquipment.availablity,
                 category:newEquipment.category,
@@ -42,20 +43,20 @@ export const addEquipment = async(req,res)=>{
 }
 export const updateEquipment=async(req,res)=>{
     try {
-        const {name,availabity,quantity,condition} = req.body
+        const {name,availablity,quantity,condition} = req.body
         if(!name) return res.status(400).json({message:"Name not provided"})
-        if(!availabity && !quantity && !condition) return res.status(400).json({message:"No field is being updated"})
+        if(!availablity && !quantity && !condition) return res.status(400).json({message:"No field is being updated"})
         
         const equipmentToUpdate = await Equipment.findOne({name});
         if(!equipmentToUpdate) return res.status(400).json({message:"Equipment doesnt exist"});
 
         
-        if(availabity) equipmentToUpdate.availablity = availabity
+        if(availablity) equipmentToUpdate.availablity = availablity
         if(quantity) {
             const oldQuantity = equipmentToUpdate.quantity;
             const diff = quantity - oldQuantity;
             equipmentToUpdate.quantity = quantity;
-            equipmentToUpdate.availableQuantity+= diff;
+            equipmentToUpdate.availableQuantity= equipmentToUpdate.availableQuantity+diff;
         }
         if(condition) equipmentToUpdate.condition = condition
 
