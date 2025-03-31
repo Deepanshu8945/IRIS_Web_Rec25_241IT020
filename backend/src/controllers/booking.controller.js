@@ -40,7 +40,7 @@ export const createBooking = async(req,res)=>{
 }
 export const getBookings = async(req,res)=>{
     try {
-        const bookings = await Booking.find()
+        const bookings = await Booking.find().populate("infrastructure").populate("user")
         res.status(200).json(bookings)
     } catch (error) {
         console.log("Error in getBookings",error.message);
@@ -49,8 +49,8 @@ export const getBookings = async(req,res)=>{
 }
 export const getUserBookings = async(req,res)=>{
     try {
-        const userId = req.params.id;
-        const userBookings = await Booking.find({userId})
+        const userId = req.user._id;
+        const userBookings = await Booking.find({user : userId}).populate("infrastructure")
         res.status(200).json(userBookings)
     } catch (error) {
         console.log("Error in getUserBookings",error.message);

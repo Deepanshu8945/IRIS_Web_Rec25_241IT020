@@ -6,7 +6,7 @@ const router = express.Router()
 router.post("/request" ,protect, createRequest)
 router.get("/getRequests" , protect,adminOnly,getAllRequets)//gets all requests
 router.get("/getUserRequests" , protect,getUserRequests)//gets only user's requests
-router.post("/accept" ,protect,adminOnly, acceptRequest)
-router.post("/reject" ,protect,adminOnly, rejectRequest)
+router.put("/accept" ,protect,adminOnly, acceptRequest)
+router.put("/reject" ,protect,adminOnly, rejectRequest)
 
 export default router

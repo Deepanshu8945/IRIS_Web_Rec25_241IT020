@@ -16,13 +16,9 @@ export const createRequest=async(req,res)=>{
         const start = new Date(startDate)
         const end = new Date(endDate)
     
-        if(start>=end) return res.status(400).json({message:"Startdate shoulb be before end date"})
+        if(start>=end) return res.status(400).json({message:"Startdate should be before end date"})
         
-        const existingRequest = await Request.findOne({
-            user:req.user._id,
-            equipment:equipmentId})
-        if(existingRequest)return res.status(400).json({message:"Request already exist"})
-    
+        
         const newRequest = new Request({
             user:req.user._id,
             equipment:equipmentId,
@@ -40,7 +36,7 @@ export const createRequest=async(req,res)=>{
 }
 export const getAllRequets = async(req,res)=>{
     try {
-        const requests = await Request.find();
+        const requests = await Request.find().populate("equipment").populate("user");
         res.status(200).json(requests)
     } catch (error) {
         console.log("Error in viewAllRequests",error.message);
@@ -49,7 +45,7 @@ export const getAllRequets = async(req,res)=>{
 }
 export const getUserRequests= async(req,res)=>{
     try{
-        const userRequests = await Request.find({user : req.user._id})
+        const userRequests = await Request.find({user : req.user._id}).populate("equipment")
         res.status(200).json(userRequests)
     } catch (error) {
         console.log("Error in viewUserRequests",error.message);
@@ -64,6 +60,7 @@ export const acceptRequest=async(req,res)=>{
         const request = await Request.findOne({_id:requestId})
 
         if(!request) return res.status(400).json({message:"Request not found!"})
+        if(request.status !== "pending") return res.status(400).json({message:"Request already accepted/rejected"})
 
         //getting ids of equipment and user that created the request 
         const userId = request.user;
@@ -72,11 +69,11 @@ export const acceptRequest=async(req,res)=>{
         const equipment = await Equipment.findOne({_id:equipmentId})
         if(!user) return res.status(400).json({message:"User doesnt exist"})
         if(!equipment) return res.status(400).json({message:"equipment doesnt exist"})
-
+        if(!equipment.availableQuantity) equipment.availableQuantity = equipment.quantity
         if(equipment.availableQuantity <=1) return res.status(400).json({message:"Not enough quantity"})
 
         request.status = "approved"
-        request.approvedAt = Date.now;
+        request.approvedAt = Date.now();
         equipment.issuedTo.push(user);
         equipment.availableQuantity--;
         await equipment.save();
@@ -99,10 +96,11 @@ export const rejectRequest=async(req,res)=>{
         const request = await Request.findOne({_id:requestId})
 
         if(!request) return res.status(400).json({message:"Request not found!"})
+        if(request.status !== "pending") return res.status(400).json({message:"Request already accepted/rejected"})
 
         request.status = "rejected"
         if(reason) request.reason = reason;
-        request.rejectedAt = Date.now;
+        request.rejectedAt = Date.now();
 
         await request.save();
 

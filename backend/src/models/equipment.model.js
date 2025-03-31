@@ -9,7 +9,7 @@ const equipmentSchema = new mongoose.Schema({
         type: String,
         required:true,
     },
-    availablity:{
+    availability:{
         type:String,
         enum:["available","not available" , "under maintenance"],
         required:true

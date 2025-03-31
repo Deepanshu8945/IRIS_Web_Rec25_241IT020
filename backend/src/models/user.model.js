@@ -18,11 +18,6 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
-    roll:{
-        type:String,
-        required:true,
-        unique:true
-    },
     role:{
         type:String,
         required:true,

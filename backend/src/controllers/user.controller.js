@@ -5,9 +5,9 @@ import bcrypt from "bcrypt"
 
 export const signup=async (req,res)=>{
     try {
-        const {name,password,email,roll,branch} = req.body
+        const {name,password,email,branch} = req.body
     
-        if(!name || !password||!email||!branch||!roll) return res.status(400).json({message:"All fields are required"})
+        if(!name || !password||!email||!branch) return res.status(400).json({message:"All fields are required"})
         
         if(password.length<8) return res.status(400).json({message:"Password must be greater than 8 characters"})
 
@@ -23,7 +23,6 @@ export const signup=async (req,res)=>{
             password:hashedPassword,
             email,
             branch,
-            roll,
             role:"user"
         })
 
@@ -36,7 +35,6 @@ export const signup=async (req,res)=>{
                 name: newUser.name,
                 email:newUser.email,
                 branch:newUser.branch,
-                roll:newUser.roll,
                 role:newUser.role
             })
         }
@@ -71,6 +69,7 @@ export const login=async(req,res)=>{
             _id:user._id,
             email:user.email,
             name:user.name,
+            role:user.role,
         })
     } catch (error) {
         console.log("Error in login controller" , error.message);
@@ -104,6 +103,22 @@ export const promoteToAdmin = async(req,res)=>{
         res.status(500).json({message:"Internal server error"})
     }
 }
+export const demoteToUser = async(req,res)=>{
+    try {
+        const user = await User.findById(req.params.id)
+        if(!user) return res.status(404).json({message:"User not found"})
+        
+        //Update the users role to admin
+        user.role = "user"
+        await user.save();
+    
+        return res.status(200).json({message:"Admin is not demoted to user"})
+    
+    } catch (error) {
+        console.log("Error in promoteUser" , error.message);
+        res.status(500).json({message:"Internal server error"})
+    }
+}
 export const getUsers = async(req,res)=>{
     try {
         const users = await User.find().select("-password")
@@ -113,3 +128,11 @@ export const getUsers = async(req,res)=>{
         res.status(500).json({message:"Internal server error"})  
     }
 }
+export const checkAuth = (req, res) => {
+    try {
+      res.status(200).json(req.user);
+    } catch (error) {
+      console.log("Error in checkAuth", error.message);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };

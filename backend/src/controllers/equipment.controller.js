@@ -2,9 +2,9 @@ import Equipment from "../models/equipment.model.js"
 
 export const addEquipment = async(req,res)=>{
     try {
-        const {name,category,availablity,quantity,condition} = req.body
+        const {name,category,availability,quantity,condition} = req.body
     
-        if(!name||!category||!availablity||!quantity||!condition) return res.status(400).json({message:"All fields are required"})
+        if(!name||!category||!availability||!quantity||!condition) return res.status(400).json({message:"All fields are required"})
         
         const equipment = await Equipment.findOne({name})
         if(equipment) return res.status(400).json({message:"Equipment entry already exist"}) 
@@ -13,7 +13,7 @@ export const addEquipment = async(req,res)=>{
             name,
             condition,
             category,
-            availablity,
+            availability,
             quantity,
             availableQuantity:quantity,
             issuedTo:[]
@@ -26,7 +26,7 @@ export const addEquipment = async(req,res)=>{
                 quantity : newEquipment.quantity,
                 availableQuantity: newEquipment.quantity,
                 condition:newEquipment.condition,
-                availablity:newEquipment.availablity,
+                availability:newEquipment.availability,
                 category:newEquipment.category,
                 issuedTo:newEquipment.issuedTo
             })
@@ -43,15 +43,15 @@ export const addEquipment = async(req,res)=>{
 }
 export const updateEquipment=async(req,res)=>{
     try {
-        const {name,availablity,quantity,condition} = req.body
+        const {name,availability,quantity,condition} = req.body
         if(!name) return res.status(400).json({message:"Name not provided"})
-        if(!availablity && !quantity && !condition) return res.status(400).json({message:"No field is being updated"})
+        if(!availability && !quantity && !condition) return res.status(400).json({message:"No field is being updated"})
         
         const equipmentToUpdate = await Equipment.findOne({name});
         if(!equipmentToUpdate) return res.status(400).json({message:"Equipment doesnt exist"});
 
         
-        if(availablity) equipmentToUpdate.availablity = availablity
+        if(availability) equipmentToUpdate.availability = availability
         if(quantity) {
             const oldQuantity = equipmentToUpdate.quantity;
             const diff = quantity - oldQuantity;
@@ -79,3 +79,18 @@ export const getEquipments=async(req,res)=>{
         
     }
 }
+export const deleteEquipment = async (req, res) => {
+    try {
+      const { id } = req.params;  // Get ID from URL params
+      const deletedEquipment = await Equipment.findByIdAndDelete(id);
+  
+      if (!deletedEquipment) {
+        return res.status(404).json({ message: "Equipment not found" });
+      }
+  
+      res.status(200).json({ message: "Equipment deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting equipment:", error.message);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };

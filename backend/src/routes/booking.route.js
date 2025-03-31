@@ -6,9 +6,9 @@ const router = express.Router()
 
 router.post("/book" , protect , createBooking)
 router.get("/bookings" , protect,adminOnly , getBookings)
-router.get("/bookings/:id" , protect, getUserBookings)
-router.post("/accept" , protect , adminOnly , acceptBooking)
-router.post("/reject" , protect , adminOnly , rejectBooking)
+router.get("/userBookings" , protect, getUserBookings)
+router.put("/accept" , protect , adminOnly , acceptBooking)
+router.put("/reject" , protect , adminOnly , rejectBooking)
 
 export default router
 

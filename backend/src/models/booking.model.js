@@ -11,15 +11,15 @@ const bookingSchema = new mongoose.Schema({
         ref:"Infrastructure",
         required:true,
     },
-    startTime:{type:String,required:true},
-    endTime:{type:String,required:true},
-    reason:{//admin can provide reason for rejection
-        type:String,
-    },
     status:{
         type:String,
         enum:["pending","approved","rejected"],
         default:"pending"
+    },
+    startTime:{type:String,required:true},
+    endTime:{type:String,required:true},
+    reason:{//admin can provide reason for rejection
+        type:String,
     },
     requestedAt:{type:Date, default:Date.now},
     approvedAt:{type:Date},
