@@ -95,16 +95,16 @@ export const acceptBooking = async(req,res)=>{
 }
 export const rejectBooking = async(req,res)=>{
     try {
-        const {infraId,reason} = req.body;
-        if(!infraId) return res.status(400).json({message:"All fields are required"})
+        const {bookingId,reason} = req.body;
+        if(!bookingId) return res.status(400).json({message:"All fields are required"})
     
-        const booking = await Booking.findOne({_id:infraId})
+        const booking = await Booking.findOne({_id:bookingId})
 
         if(!booking) return res.status(400).json({message:"Booking not found!"})
 
         booking.status = "rejected"
         if(reason) booking.reason = reason;
-        booking.rejectedAt = Date.now;
+        booking.rejectedAt = Date.now();
 
         await booking.save();
 
